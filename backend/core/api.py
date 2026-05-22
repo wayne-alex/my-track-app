@@ -8,15 +8,10 @@ from core.schemas import ApplicationInSchema, ApplicationOutSchema, ReviewerDeci
 api = NinjaAPI(title="Application Workflow API")
 
 
-# 1. LIST ALL RECORDS
 @api.get("/applications", response=List[ApplicationOutSchema])
 def list_applications(request):
     return Application.objects.all().order_by('-created_at')
 
-
-# 2. CREATE OR UPDATE DRAFT (UPSERT / AUTO-SAVE)
-# ⚠️ Must be defined BEFORE /applications/{tracking_number}
-# so "draft" is not matched as a tracking_number path parameter
 @api.post("/applications/draft", response=ApplicationOutSchema)
 def save_application_draft(request, data: ApplicationInSchema):
     # Treat both None and empty string as "new draft"
@@ -46,15 +41,10 @@ def save_application_draft(request, data: ApplicationInSchema):
         )
         return app
 
-
-# 3. VIEW SINGLE RECORD DETAILS
-# Dynamic route — must come AFTER all fixed /applications/xxx routes
 @api.get("/applications/{tracking_number}", response=ApplicationOutSchema)
 def get_application(request, tracking_number: str):
     return get_object_or_404(Application, tracking_number=tracking_number)
 
-
-# 4. SUBMIT APPLICATION
 @api.post("/applications/{tracking_number}/submit")
 def submit_application(request, tracking_number: str):
     app = get_object_or_404(Application, tracking_number=tracking_number)
@@ -66,7 +56,6 @@ def submit_application(request, tracking_number: str):
     return {"success": True, "status": app.status}
 
 
-# 5. START REVIEW PHASE
 @api.post("/applications/{tracking_number}/start-review")
 def start_review(request, tracking_number: str):
     app = get_object_or_404(Application, tracking_number=tracking_number)
@@ -76,8 +65,6 @@ def start_review(request, tracking_number: str):
     app.save()
     return {"success": True, "status": app.status}
 
-
-# 6. RECORD REVIEWER DECISION
 @api.post("/applications/{tracking_number}/decision")
 def record_decision(request, tracking_number: str, payload: ReviewerDecisionSchema):
     app = get_object_or_404(Application, tracking_number=tracking_number)

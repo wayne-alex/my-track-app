@@ -171,3 +171,8 @@ The action panel dynamically adjusts options based on the entry's exact database
 ### 🔌 Automated API Documentation
 The built-in Swagger/OpenAPI interactive interface generated automatically by Django Ninja.
 ![Django Ninja API Documentation](assets/application_workflow_api.png)
+
+## 👤 Contact Information
+
+* **Name:** Wayne Murunga
+* **Email:** waynealex9914@gmail.com
